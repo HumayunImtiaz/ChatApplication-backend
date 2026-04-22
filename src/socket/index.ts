@@ -11,7 +11,7 @@ let ioInstance: SocketServer | null = null;
 export function initializeSocket(httpServer: HTTPServer): SocketServer {
   const io = new SocketServer(httpServer, {
     cors: {
-      origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+      origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true,
       methods: ['GET', 'POST'],
       credentials: true,
     },
