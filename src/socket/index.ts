@@ -95,8 +95,14 @@ export function initializeSocket(httpServer: HTTPServer): SocketServer {
         // Send message via service
         const message = await MessageService.sendMessage(chatId, userId, content);
 
+        if ('error' in message) {
+          socket.emit('message:error', { error: message.error });
+          return;
+        }
+
         // Get sender info
         const sender = await UserService.getUserById(userId);
+        const senderData = sender && !('error' in sender) ? sender : null;
 
         // Prepare message data with sender info
         const messageData = {
@@ -106,8 +112,8 @@ export function initializeSocket(httpServer: HTTPServer): SocketServer {
           content: message.content,
           status: message.status,
           created_at: message.created_at,
-          sender_name: sender?.username,
-          sender_avatar: sender?.avatar,
+          sender_name: senderData?.username,
+          sender_avatar: senderData?.avatar,
         };
 
         // Emit to all users in the chat room (including sender)
@@ -115,11 +121,13 @@ export function initializeSocket(httpServer: HTTPServer): SocketServer {
 
         // Also emit to all members' private rooms for notifications
         const members = await MessageService.getChatMembers(chatId);
-        members.forEach(memberId => {
-          if (memberId !== userId) {
-            io.to(`user:${memberId}`).emit('message:new', messageData);
-          }
-        });
+        if (Array.isArray(members)) {
+          members.forEach(memberId => {
+            if (memberId !== userId) {
+              io.to(`user:${memberId}`).emit('message:new', messageData);
+            }
+          });
+        }
 
         console.log(`Message sent in chat ${chatId} by user ${userId}`);
       } catch (error) {
