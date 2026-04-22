@@ -5,14 +5,17 @@ export const registerSchema = Joi.object({
   username: Joi.string().min(3).max(50).required().messages({
     'string.min': 'Username must be at least 3 characters',
     'string.max': 'Username cannot exceed 50 characters',
+    'string.empty': 'Username is required',
     'any.required': 'Username is required',
   }),
   email: Joi.string().email().required().messages({
     'string.email': 'Please provide a valid email',
+    'string.empty': 'Email is required',
     'any.required': 'Email is required',
   }),
   password: Joi.string().min(6).required().messages({
     'string.min': 'Password must be at least 6 characters',
+    'string.empty': 'Password is required',
     'any.required': 'Password is required',
   }),
   avatar: Joi.string().uri().optional(),
@@ -21,9 +24,11 @@ export const registerSchema = Joi.object({
 export const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     'string.email': 'Please provide a valid email',
+    'string.empty': 'Email is required',
     'any.required': 'Email is required',
   }),
   password: Joi.string().required().messages({
+    'string.empty': 'Password is required',
     'any.required': 'Password is required',
   }),
 });

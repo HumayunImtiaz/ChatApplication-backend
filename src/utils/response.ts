@@ -35,7 +35,7 @@ export function sendError(
   const response: ErrorResponse = {
     success: false,
     message,
-    ...(error && process.env.NODE_ENV === 'development' && { error }),
+    ...(error && { error }),
   };
   return res.status(statusCode).json(response);
 }
