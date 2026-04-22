@@ -11,4 +11,13 @@ const dbConfig = {
 
 const db = knex(dbConfig);
 
+
+db.raw('select 1')
+  .then(() => {
+    console.log('Database connected successfully');
+  })
+  .catch((err) => {
+    console.error(' Database connection failed:', err.message);
+  });
+
 export default db;
