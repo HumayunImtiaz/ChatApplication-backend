@@ -176,7 +176,8 @@ export class MessageController {
         return sendError(res, 400, 'No file uploaded');
       }
 
-      const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      // multer-storage-cloudinary automatically puts the secure_url in req.file.path
+      const fileUrl = req.file.path;
 
       return sendSuccess(res, 200, 'File uploaded successfully', {
         url: fileUrl,

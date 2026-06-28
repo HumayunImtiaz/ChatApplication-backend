@@ -54,6 +54,32 @@ export class ChatController {
     }
   }
 
+  // Update group chat
+  static async updateGroupChat(req: AuthRequest, res: Response): Promise<Response> {
+    try {
+      const { chatId } = req.params;
+      const { name, avatar } = req.body;
+      const userId = req.user!.userId;
+
+      const result = await ChatService.updateGroupChat(chatId, userId, { name, avatar });
+      if (result && 'error' in result) {
+        return sendError(res, 400, result.error as string);
+      }
+
+      // Notify via socket could be added here
+      try {
+         const io = getIO();
+         io.to(`chat:${chatId}`).emit('chat:updated', { chatId, name, avatar });
+      } catch (socketError) {
+         console.error('Socket error on group update:', socketError);
+      }
+
+      return sendSuccess(res, 200, 'Group chat updated successfully', result);
+    } catch (error: any) {
+      return sendError(res, 400, error.message);
+    }
+  }
+
   // Get user's chats
   static async getUserChats(req: AuthRequest, res: Response): Promise<Response> {
     try {

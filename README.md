@@ -1,3 +1,13 @@
+---
+title: ChatApp Backend
+emoji: 💬
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Chat Application Backend
 
 A professional real-time chat application backend built with TypeScript, Express.js, Socket.io, Knex, and PostgreSQL.

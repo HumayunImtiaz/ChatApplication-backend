@@ -11,8 +11,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config();
+// Load environment variables explicitly from the backend directory
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -22,7 +22,7 @@ const io = initializeSocket(server);
 
 // Middleware
 app.use(cors({
-  origin: true, // Allow all origins during development
+  origin: true, 
   credentials: true,
 }));
 app.use(express.json());
@@ -55,19 +55,15 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7860;
+const HOST = '0.0.0.0';
 
-server.listen(PORT, () => {
+server.listen(Number(PORT), HOST, () => {
   console.log(`
-
-║                                                      
-   Chat Application Server                         
-                                                       
-   Server running on: http://localhost:${PORT}         
-   Environment: ${process.env.NODE_ENV || 'development'}                           
-   Socket.io: Enabled                                 
-                                                       
-
+    Chat Application Server
+    Server running on: http://${HOST}:${PORT}
+    Environment: ${process.env.NODE_ENV || 'development'}
+    Socket.io: Enabled
   `);
 });
 

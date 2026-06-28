@@ -53,6 +53,16 @@ export const createGroupChatSchema = Joi.object({
   }),
 });
 
+export const updateGroupChatSchema = Joi.object({
+  name: Joi.string().min(1).max(100).optional().messages({
+    'string.min': 'Group name must be at least 1 character',
+    'string.max': 'Group name cannot exceed 100 characters',
+  }),
+  avatar: Joi.string().uri().allow('', null).optional().messages({
+    'string.uri': 'Avatar must be a valid URL',
+  }),
+});
+
 // Message Validation Schemas
 export const sendMessageSchema = Joi.object({
   chat_id: Joi.string().uuid().required().messages({
