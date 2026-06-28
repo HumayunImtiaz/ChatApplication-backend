@@ -6,6 +6,7 @@ import {
   createDirectChatSchema,
   createGroupChatSchema,
   inviteToGroupSchema,
+  updateGroupChatSchema
 } from '../validators/index.js';
 
 const router = Router();
@@ -15,6 +16,7 @@ router.use(authenticate);
 
 router.post('/direct', validate(createDirectChatSchema), ChatController.createDirectChat);
 router.post('/group', validate(createGroupChatSchema), ChatController.createGroupChat);
+router.put('/:chatId/group', validate(updateGroupChatSchema), ChatController.updateGroupChat);
 router.get('/', ChatController.getUserChats);
 router.get('/:chatId', ChatController.getChatById);
 router.post('/invite', validate(inviteToGroupSchema), ChatController.inviteToGroup);

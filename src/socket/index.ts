@@ -68,7 +68,7 @@ export function initializeSocket(httpServer: HTTPServer): SocketServer {
         await MessageService.markMessagesAsDelivered(chatId, userId);
         
         // Notify other users in the chat that their messages were delivered
-        socket.to(`chat:${chatId}`).emit('message:status-updated', {
+        socket.to(`chat:${chatId}`).emit('message: status-updated', {
           chatId,
           userId,
           status: 'delivered'

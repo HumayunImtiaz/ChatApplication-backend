@@ -11,8 +11,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config();
+// Load environment variables explicitly from the backend directory
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -22,7 +22,7 @@ const io = initializeSocket(server);
 
 // Middleware
 app.use(cors({
-  origin: true, // Allow all origins during development
+  origin: true, 
   credentials: true,
 }));
 app.use(express.json());
