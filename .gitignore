@@ -35,3 +35,8 @@ coverage/
 # Temporary files
 tmp/
 temp/
+out*.txt
+
+# Uploads (now using Cloudinary)
+uploads/
+src/uploads/
