@@ -157,7 +157,7 @@ async function main() {
 
   const allTargetIds = targetUsers.map(u => u.id);
 
-  // Group 1: "Team Developers 🚀"
+  // Group 1: "Team Developers "
   console.log('  📁 Creating Group: "Team Developers 🚀"...');
   const g1 = await post(
     `${BASE_URL}/chats/group`,
@@ -254,7 +254,7 @@ async function main() {
   console.log('╠══════════════════════════════════════════════╣');
   console.log(`║  💬 Direct Chats: ${String(directChatResults.length).padEnd(26)}║`);
   console.log(`║  👥 Groups: 2                                ║`);
-  console.log(`║     • Team Developers 🚀                    ║`);
+  console.log(`║     • Team Developers                     ║`);
   console.log(`║     • General Chat 💬                        ║`);
   console.log('╠══════════════════════════════════════════════╣');
   console.log('║  All invitations have been auto-accepted!   ║');

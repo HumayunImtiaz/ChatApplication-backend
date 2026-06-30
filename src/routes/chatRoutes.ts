@@ -21,5 +21,6 @@ router.get('/', ChatController.getUserChats);
 router.get('/:chatId', ChatController.getChatById);
 router.post('/invite', validate(inviteToGroupSchema), ChatController.inviteToGroup);
 router.delete('/:chatId/leave', ChatController.leaveChat);
+router.delete('/:chatId/members/:memberId', ChatController.removeMember);
 
 export default router;

@@ -139,6 +139,29 @@ export class ChatController {
   }
 
   // Leave chat
+  static async removeMember(req: AuthRequest, res: Response): Promise<Response> {
+    try {
+      const { chatId, memberId } = req.params;
+      const adminId = req.user!.userId;
+
+      const result = await ChatService.removeMember(chatId, memberId, adminId);
+      if (result && 'error' in result) return sendError(res, 400, result.error as string);
+
+      try {
+        const io = getIO();
+        io.to(`chat:${chatId}`).emit('chat:member-removed', { chatId, memberId });
+        io.to(`user:${memberId}`).emit('chat:removed', { chatId });
+      } catch (socketError) {
+        console.error('Socket broadcast error:', socketError);
+      }
+
+      return sendSuccess(res, 200, 'Member removed successfully');
+    } catch (error: any) {
+      return sendError(res, 400, error.message);
+    }
+  }
+
+  // Leave chat
   static async leaveChat(req: AuthRequest, res: Response): Promise<Response> {
     try {
       const { chatId } = req.params;

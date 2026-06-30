@@ -312,6 +312,39 @@ export class ChatService {
   }
 
   // Leave or delete chat (removes member)
+  static async removeMember(
+    chatId: string,
+    memberId: string,
+    adminId: string
+  ): Promise<{ success: boolean } | { error: string }> {
+    try {
+      // Check if adminId is actually admin
+      const adminMembership = await db('chat_members')
+        .where({ chat_id: chatId, user_id: adminId })
+        .first();
+
+      if (!adminMembership || adminMembership.role !== MemberRole.ADMIN) {
+        return { error: 'Only admins can remove members' };
+      }
+
+      // Check if trying to remove self via this endpoint (admins should use leaveChat instead or can use this)
+      if (adminId === memberId) {
+         return { error: 'To leave the group, please use the leave group option' };
+      }
+
+      const deletedCount = await db('chat_members')
+        .where({ chat_id: chatId, user_id: memberId })
+        .del();
+        
+      if (deletedCount === 0) {
+        return { error: 'User is not a member of this group' };
+      }
+
+      return { success: true };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
   static async leaveChat(chatId: string, userId: string): Promise<void | { success: boolean } | { error: string }> {
     try {
       await db('chat_members')
