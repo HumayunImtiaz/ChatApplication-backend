@@ -175,12 +175,13 @@ export class ChatService {
               'id', u.id,
               'username', u.username,
               'avatar', u.avatar,
-              'is_online', u.is_online
+              'is_online', u.is_online,
+              'role', COALESCE(m.role, 'pending')
             ))
             FROM (
-              SELECT user_id as member_id FROM chat_members WHERE chat_id = chats.id
+              SELECT user_id as member_id, role FROM chat_members WHERE chat_id = chats.id
               UNION
-              SELECT invitee_id as member_id FROM invitations WHERE chat_id = chats.id AND status = 'pending'
+              SELECT invitee_id as member_id, 'pending' as role FROM invitations WHERE chat_id = chats.id AND status = 'pending'
             ) m
             JOIN users u ON m.member_id = u.id
             ) as members
@@ -312,6 +313,39 @@ export class ChatService {
   }
 
   // Leave or delete chat (removes member)
+  static async removeMember(
+    chatId: string,
+    memberId: string,
+    adminId: string
+  ): Promise<{ success: boolean } | { error: string }> {
+    try {
+      // Check if adminId is actually admin
+      const adminMembership = await db('chat_members')
+        .where({ chat_id: chatId, user_id: adminId })
+        .first();
+
+      if (!adminMembership || adminMembership.role !== MemberRole.ADMIN) {
+        return { error: 'Only admins can remove members' };
+      }
+
+      // Check if trying to remove self via this endpoint (admins should use leaveChat instead or can use this)
+      if (adminId === memberId) {
+         return { error: 'To leave the group, please use the leave group option' };
+      }
+
+      const deletedCount = await db('chat_members')
+        .where({ chat_id: chatId, user_id: memberId })
+        .del();
+        
+      if (deletedCount === 0) {
+        return { error: 'User is not a member of this group' };
+      }
+
+      return { success: true };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
   static async leaveChat(chatId: string, userId: string): Promise<void | { success: boolean } | { error: string }> {
     try {
       await db('chat_members')
