@@ -15,7 +15,8 @@ const storage = new CloudinaryStorage({
   params: async (req: any, file: any) => {
     return {
       folder: 'chatapp_uploads',
-      resource_type: 'auto'
+      resource_type: 'auto',
+      public_id: file.originalname ? `${file.originalname.split('.').slice(0, -1).join('.')}_${Date.now()}`.replace(/[^a-zA-Z0-9_-]/g, '') : undefined
     };
   },
 });

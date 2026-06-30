@@ -175,12 +175,13 @@ export class ChatService {
               'id', u.id,
               'username', u.username,
               'avatar', u.avatar,
-              'is_online', u.is_online
+              'is_online', u.is_online,
+              'role', COALESCE(m.role, 'pending')
             ))
             FROM (
-              SELECT user_id as member_id FROM chat_members WHERE chat_id = chats.id
+              SELECT user_id as member_id, role FROM chat_members WHERE chat_id = chats.id
               UNION
-              SELECT invitee_id as member_id FROM invitations WHERE chat_id = chats.id AND status = 'pending'
+              SELECT invitee_id as member_id, 'pending' as role FROM invitations WHERE chat_id = chats.id AND status = 'pending'
             ) m
             JOIN users u ON m.member_id = u.id
             ) as members
